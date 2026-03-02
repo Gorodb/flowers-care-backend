@@ -1,6 +1,6 @@
 import { IsString, Length } from 'class-validator';
 
-export class CreateUserDto {
+export class UserDto {
   @IsString({ message: `User's login can't be empty` })
   login: string;
 

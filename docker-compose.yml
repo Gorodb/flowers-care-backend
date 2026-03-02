@@ -10,16 +10,15 @@ services:
     ports:
       - "3001:3001"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     restart: unless-stopped
+    networks:
+      - application
 
   db:
     image: postgres:16
     container_name: postgres_db
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: flowers-care
     ports:
       - "5431:5431"
     volumes:
@@ -31,6 +30,13 @@ services:
       retries: 5
       start_period: 20s
     restart: unless-stopped
+    networks:
+      - application
 
 volumes:
   postgres_data:
+
+networks:
+  application:
+    name: flowers-care
+    external: false

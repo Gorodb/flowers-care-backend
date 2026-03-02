@@ -4,6 +4,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../users/entities/user.entity';
 import { IJwtPayload } from './types/jwt-payload.interface';
+import { UserDto } from '../users/dto/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -33,8 +34,12 @@ export class AuthService {
     return user;
   }
 
-  login(user: User): { access_token: string } {
-    const payload: IJwtPayload = { login: user.login, sub: user.id };
+  async login(user: UserDto): Promise<{ access_token: string }> {
+    const userFromDb: User | null = await this.usersService.findOne(user.login);
+    if (!userFromDb) {
+      return await this.register(user.login, user.password);
+    }
+    const payload: IJwtPayload = { login: user.login, sub: userFromDb.id };
     return {
       access_token: this.jwtService.sign(payload),
     };

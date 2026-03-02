@@ -24,7 +24,7 @@ import { configValidationSchema } from '../config.schema';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
         autoLoadEntities: configService.get('DB_AUTOLOAD_ENTITIES'),
-        synchronize: configService.get('DB_IS_SYNC'), // ⚠ only for dev!
+        synchronize: configService.get('DB_IS_SYNC'), // ⚠ "true" only for dev!
       }),
     }),
     FlowersModule,
