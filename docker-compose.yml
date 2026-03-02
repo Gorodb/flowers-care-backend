@@ -1,18 +1,14 @@
-version: "3.9"
-
 services:
   app:
     image: node:24-alpine
     container_name: app_dev
     working_dir: /usr/src/app
     volumes:
-      - ./:/usr/src/app
-      - /usr/src/app/node_modules
+      - ./:/usr/src/app:delegated
+      - ./node_modules:/usr/src/app/node_modules
     command: sh -c "yarn install && yarn start:dev"
     ports:
       - "3001:3001"
-    environment:
-      DATABASE_URL: postgres://postgres:postgres@db:5432/flowers-care
     depends_on:
       - db
     restart: unless-stopped
@@ -28,6 +24,12 @@ services:
       - "5431:5431"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     restart: unless-stopped
 
 volumes:
