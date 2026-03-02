@@ -10,7 +10,7 @@ services:
       - /usr/src/app/node_modules
     command: sh -c "yarn install && yarn start:dev"
     ports:
-      - "3000:3000"
+      - "3001:3001"
     environment:
       DATABASE_URL: postgres://postgres:postgres@db:5432/flowers-care
     depends_on:
@@ -25,7 +25,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: flowers-care
     ports:
-      - "5432:5432"
+      - "5431:5431"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
