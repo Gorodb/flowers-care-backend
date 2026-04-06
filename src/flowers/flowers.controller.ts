@@ -8,7 +8,6 @@ import {
   Delete,
   UseGuards,
   Request,
-  Logger,
 } from '@nestjs/common';
 import { FlowersService } from './flowers.service';
 import { CreateFlowerDto } from './dto/create-flower.dto';
@@ -26,7 +25,6 @@ export class FlowersController {
     @Body() createFlowerDto: Partial<CreateFlowerDto>,
     @Request() req: AuthRequest,
   ) {
-    Logger.log(req.user);
     return this.flowersService.create(createFlowerDto, req.user.id);
   }
 

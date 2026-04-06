@@ -23,7 +23,9 @@ export class FlowersService {
     createFlowerDto: Partial<CreateFlowerDto>,
     userId: number,
   ): Promise<FlowersResponse> {
-    logger.log(userId);
+    logger.debug('creating a flower');
+    logger.debug('userId', userId);
+    logger.debug('createFlowerDto', createFlowerDto);
     const flower = this.flowersRepository.create({
       ...createFlowerDto,
       userId,
@@ -36,11 +38,13 @@ export class FlowersService {
   }
 
   async findAll(userId: number): Promise<AllFlowersResponse> {
+    logger.debug('find all flowers for user: ', userId);
     const data = await this.flowersRepository.find({ where: { userId } });
     return { success: true, data };
   }
 
   async findOne(id: number, userId: number): Promise<FlowersResponse> {
+    logger.debug('find a flower: ', id, ' for user: ', userId);
     const flower = await this.flowersRepository.findOneBy({ id });
     if (!flower || !userId || flower.userId !== userId) {
       return { success: false };
@@ -53,6 +57,7 @@ export class FlowersService {
     updateFlowerDto: Partial<UpdateFlowerDto>,
     userId: number,
   ): Promise<FlowersResponse> {
+    logger.debug('update a flower with id: ', id, ' for user: ', userId);
     let flower = await this.flowersRepository.findOneBy({ id, userId });
     if (!flower) {
       return { success: false };
@@ -63,6 +68,7 @@ export class FlowersService {
   }
 
   async remove(id: number, userId: number): Promise<DeleteResponse> {
+    logger.debug('remove a flower with id: ', id, ' for user: ', userId);
     const deletedFlower = await this.flowersRepository.delete({ id, userId });
     if (deletedFlower.affected === 0) {
       return { success: false };
