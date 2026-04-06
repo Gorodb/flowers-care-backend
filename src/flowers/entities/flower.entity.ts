@@ -8,6 +8,12 @@ export class Flower {
   @Column()
   name: string;
 
+  @Column()
+  description: string;
+
+  @Column()
+  image: string;
+
   @Column({ default: true })
   isStillAlive: boolean;
 }

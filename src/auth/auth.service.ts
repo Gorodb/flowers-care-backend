@@ -34,14 +34,21 @@ export class AuthService {
     return user;
   }
 
-  async login(user: UserDto): Promise<{ access_token: string }> {
-    const userFromDb: User | null = await this.usersService.findOne(user.login);
-    if (!userFromDb) {
-      return await this.register(user.login, user.password);
+  async login({
+    login,
+    password,
+    isRegistration,
+  }: UserDto): Promise<{ access_token?: string; success: boolean }> {
+    const userFromDb: User | null = await this.usersService.findOne(login);
+    if (!userFromDb && isRegistration) {
+      return await this.register(login, password);
+    } else if (!userFromDb && !isRegistration) {
+      return { success: false };
     }
-    const payload: IJwtPayload = { login: user.login, sub: userFromDb.id };
+    const payload: IJwtPayload = { login, sub: userFromDb!.id };
     return {
       access_token: this.jwtService.sign(payload),
+      success: true,
     };
   }
 
@@ -50,6 +57,7 @@ export class AuthService {
 
     return {
       access_token: this.jwtService.sign(payload),
+      success: true,
     };
   }
 }

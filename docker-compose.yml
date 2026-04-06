@@ -17,12 +17,12 @@ services:
       - application
 
   db:
-    image: postgres:16
+    image: postgres:18-alpine
     container_name: postgres_db
     ports:
-      - "5431:5431"
+      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./postgres_data:/var/lib/postgresql/data/pgdata/18
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "postgres" ]
       interval: 5s
@@ -30,6 +30,10 @@ services:
       retries: 5
       start_period: 20s
     restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: flowers-care
     networks:
       - application
 
