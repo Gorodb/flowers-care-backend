@@ -6,12 +6,15 @@ export class Flower {
   id: number;
 
   @Column()
+  userId: number;
+
+  @Column()
   name: string;
 
-  @Column()
+  @Column({ default: '' })
   description: string;
 
-  @Column()
+  @Column({ default: '' })
   image: string;
 
   @Column({ default: true })
