@@ -24,28 +24,34 @@ export class AuthService {
     return this.generateToken(user);
   }
 
-  async validateUser(login: string, pass: string) {
+  async validateUser(
+    login: string,
+    pass: string,
+  ): Promise<{
+    user: User | null;
+    reason?: string;
+  }> {
     const user = await this.usersService.findOne(login);
-    if (!user) return null;
+    if (!user) return { user: null, reason: 'Not registered' };
 
     const isMatch = await bcrypt.compare(pass, user.password);
-    if (!isMatch) return null;
+    if (!isMatch) return { user: null, reason: 'Authentication error' };
 
-    return user;
+    return { user };
   }
 
-  async login({
-    login,
-    password,
-    isRegistration,
-  }: UserDto): Promise<{ access_token?: string; success: boolean }> {
-    const userFromDb: User | null = await this.usersService.findOne(login);
-    if (!userFromDb && isRegistration) {
+  async login({ login, password, isRegistration }: UserDto): Promise<{
+    access_token?: string;
+    success: boolean;
+    reason?: string;
+  }> {
+    const { user, reason } = await this.validateUser(login, password);
+    if (!user && isRegistration) {
       return await this.register(login, password);
-    } else if (!userFromDb && !isRegistration) {
-      return { success: false };
+    } else if (!user && !isRegistration) {
+      return { success: false, reason };
     }
-    const payload: IJwtPayload = { login, sub: userFromDb!.id };
+    const payload: IJwtPayload = { login, sub: user!.id };
     return {
       access_token: this.jwtService.sign(payload),
       success: true,
