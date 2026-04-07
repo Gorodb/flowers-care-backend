@@ -38,10 +38,10 @@ export class AuthService {
     reason?: string;
   }> {
     const user = await this.usersService.findOne(login);
-    if (!user) return { user: null, reason: 'Not registered' };
+    if (!user) return { user: null, reason: 'notRegistered' };
 
     const isMatch = await bcrypt.compare(pass, user.password);
-    if (!isMatch) return { user: null, reason: 'Authentication error' };
+    if (!isMatch) return { user: null, reason: 'authError' };
 
     return { user };
   }
