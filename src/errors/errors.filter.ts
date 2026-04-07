@@ -4,10 +4,6 @@ import {
   HttpException,
   ArgumentsHost,
   HttpStatus,
-  UnauthorizedException,
-  NotFoundException,
-  InternalServerErrorException,
-  ForbiddenException,
   Logger,
 } from '@nestjs/common';
 import { Response } from 'express';
@@ -26,37 +22,41 @@ export class ErrorFilter implements ExceptionFilter {
     logger.error(error);
 
     if (errorName === 'TokenExpiredError') {
-      return response.status(status).send({
-        ...new ForbiddenException('Token expired'),
-        debug: errorMessage,
-      });
+      return response
+        .status(status)
+        .json({ success: false, reason: 'Token expired', status });
     }
 
     if (status === 550) {
-      return response.status(status).send({
-        ...new ForbiddenException('Unable to send request by provided address'),
-        debug: errorMessage,
+      return response.status(status).json({
+        success: false,
+        reason: 'Unable to send request by provided address',
+        status,
       });
     }
 
     if (status === (HttpStatus.UNAUTHORIZED as number)) {
-      return response.status(status).send({
-        ...new UnauthorizedException(errorMessage),
+      return response.status(status).json({
+        success: false,
+        reason: errorMessage,
+        status,
       });
     }
 
     if (status === (HttpStatus.NOT_FOUND as number)) {
       return response
         .status(status)
-        .send({ ...new NotFoundException('Not found'), debug: errorMessage });
+        .json({ success: false, reason: 'Not found', status });
     }
 
     if (status && response) {
-      return response.status(status).send(response);
+      return response.status(status).json(response);
     }
 
-    return response
-      .status(status)
-      .send({ ...new InternalServerErrorException(), debug: error.message });
+    return response.status(status).json({
+      success: false,
+      reason: errorMessage,
+      status,
+    });
   }
 }

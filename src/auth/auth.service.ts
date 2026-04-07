@@ -1,4 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  HttpException,
+  HttpStatus,
+  Logger,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
@@ -49,7 +55,7 @@ export class AuthService {
     if (!user && isRegistration) {
       return await this.register(login, password);
     } else if (!user && !isRegistration) {
-      return { success: false, reason };
+      throw new UnauthorizedException(reason);
     }
     const payload: IJwtPayload = { login, sub: user!.id };
     return {
