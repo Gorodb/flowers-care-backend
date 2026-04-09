@@ -5,6 +5,12 @@ export class CreateFlowerDto {
   @Length(1, 64, { message: 'Max length of 64 symbols is exceeded' })
   name: string;
 
+  @IsString({ message: `Flower's name can't be empty` })
+  description: string;
+
+  @IsString({ message: `Flower's name can't be empty` })
+  image: string;
+
   @IsBoolean({ message: `Value should be of type boolean` })
   @IsOptional()
   isStillAlive: boolean;
